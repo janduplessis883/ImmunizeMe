@@ -141,6 +141,7 @@ reverse_name_mapping = {
         "COVID-19 Vacc VidPrevtyn (B.1.351) 0.5ml inj multidose vials Booster",
         "COVID-19 mRNA Vaccine Comirnaty Children 5-11yrs 10mcg/0.2ml dose conc for disp for inj MDV (Pfizer) 1",
         "COVID-19 mRNA Vaccine Comirnaty Children 5-11yrs 10mcg/0.2ml dose conc for disp for inj MDV (Pfizer) 2",
+        "COVID-19 Vacc Spikevax (XBB.1.5) 0.1mg/1ml inj md vials Booster",
     ],
     "BCG": ["BCG 1", "Infant BCG 1"],
     "DTP": [
@@ -329,7 +330,7 @@ def age_group_heatmap(df, age_in_years=0):
     st.write(f"Patient Count: {sorted_df.shape[0]}")
     # Create a heatmap
     plt.figure(figsize=(18, 12))
-    sns.heatmap(sorted_df, annot=True, fmt="d", cmap="Blues", cbar=True)
+    sns.heatmap(sorted_df, annot=True, fmt="d", cmap="Oranges", cbar=True)
 
     # Adding title and labels
     plt.title('Heatmap of Number of Vaccinations by Surname and Vaccination Type, Sorted by Age Weeks')
