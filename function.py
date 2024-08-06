@@ -340,6 +340,7 @@ def age_group_heatmap(df, age_in_years=0):
     # Show the plot
     st.pyplot(plt)
 
+
 def update_column_names(df):
     df.rename(columns=lambda x: x.lower().replace(' ', '_'), inplace=True)
     return df

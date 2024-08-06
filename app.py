@@ -42,6 +42,7 @@ def loadcsv(stringio):
 
     return df
 
+
 st.sidebar.title("Configure")
     # Only display the file uploader if sample data is not selected
 uploaded_file = st.sidebar.file_uploader("Choose a .csv or .xslx file", type="csv")
