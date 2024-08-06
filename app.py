@@ -74,3 +74,9 @@ if uploaded_file is not None:
             st.image('images/70to79.png')
         st.markdown(f"### Seleceted Age {selected_age} yrs")
         age_group_heatmap(data, age_in_years=selected_age)
+
+        toggle = st.sidebar.toggle("Show DataFrame", help="Show the corresponding DataFrame, allowing you to download a csv of the data.")
+        if toggle:
+            st.divider()
+            st.write("")
+            st.dataframe(show_df(data, age_in_years=selected_age))

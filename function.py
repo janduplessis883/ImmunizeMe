@@ -344,3 +344,9 @@ def age_group_heatmap(df, age_in_years=0):
 def update_column_names(df):
     df.rename(columns=lambda x: x.lower().replace(' ', '_'), inplace=True)
     return df
+
+def show_df(df, age_in_years=0):
+    age_0 = df[df['age_in_years'] == age_in_years]
+    result = age_0.groupby(['nhs_number', 'first_name', 'surname', 'date_of_birth', 'age_years', 'age_weeks', 'vaccination_type']).size().unstack(fill_value=0)
+    sorted_df = result.sort_values('age_weeks')
+    return sorted_df
