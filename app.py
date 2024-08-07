@@ -47,7 +47,7 @@ st.sidebar.title("Control Panel")
 # Only display the file uploader if sample data is not selected
 toggle = st.sidebar.checkbox("Load sample data")
 if toggle:
-    url = "images/sample_data.csv"
+    url = "images/sample_data2.csv"
     data = loadcsv(url)
 
 
