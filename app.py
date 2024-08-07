@@ -50,7 +50,7 @@ uploaded_file = st.sidebar.file_uploader("Choose a .csv file", type="csv")
 if uploaded_file is not None:
     stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
     data = loadcsv(stringio)
-    st.divider()
+    st.sidebar.divider()
     if data is not None:
         selected_age = st.sidebar.slider(
         label="Select an **Age Group**",
