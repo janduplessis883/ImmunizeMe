@@ -128,6 +128,7 @@ reverse_name_mapping = {
     "Rotavirus": [
         "Rotarix 1",
         "Rotarix 2",
+        "Rotarix",
         "Rotavirus - Oral 1",
         "Rotavirus - Oral 2",
         "Rotavirus - Oral 3",
