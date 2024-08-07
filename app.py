@@ -11,8 +11,23 @@ import pendulum
 now = pendulum.now()
 
 st.set_page_config(page_title="ImmunizeMe", layout="wide")
-st.markdown("# :material/vaccines: ImmunizeMe")
 st.logo("images/logo.png")
+
+html = """
+<style>
+.gradient-text {
+    background: linear-gradient(45deg, #284d74, #d8ad45, #b2d9db, #e16d33);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 52px;
+    font-weight: bold;
+}
+</style>
+<div class="gradient-text">ImmunizeMe</div>
+"""
+st.markdown(html, unsafe_allow_html=True)
+
 
 @st.cache_data(ttl=60 * 60)
 def loadcsv(stringio):
@@ -41,7 +56,7 @@ def loadcsv(stringio):
 
     return df
 
-st.sidebar.title("Control Panel")
+st.sidebar.markdown("# :material/vaccines: Control Panel")
 
 
 # Only display the file uploader if sample data is not selected
@@ -73,9 +88,9 @@ if 'data' in locals():
         st.image('images/8to16weeks.png')
     elif selected_age == 1:
         st.image('images/1yr.png')
-    elif selected_age == 3:
+    elif selected_age == 3 or (selected_age >= 12 and selected_age <= 13):
         st.image('images/3yrs.png')
-    elif selected_age == 14:
+    elif selected_age >= 12 and selected_age <= 14:
         st.image('images/14yrs.png')
     elif selected_age == 65:
         st.image('images/65.png')
