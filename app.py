@@ -11,9 +11,8 @@ import pendulum
 now = pendulum.now()
 
 st.set_page_config(page_title="ImmunizeMe", layout="wide")
-st. markdown("# :material/vaccines: ImmunizeMe")
+st.markdown("# :material/vaccines: ImmunizeMe")
 st.logo("images/logo.png")
-
 
 @st.cache_data(ttl=60 * 60)
 def loadcsv(stringio):
@@ -42,50 +41,56 @@ def loadcsv(stringio):
 
     return df
 
-
 st.sidebar.title("Control Panel")
-st.sidebar.subheader("Upload data")
-    # Only display the file uploader if sample data is not selected
-uploaded_file = st.sidebar.file_uploader("Upload .csv file", type="csv")
 
-if uploaded_file is not None:
-    stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
-    data = loadcsv(stringio)
 
-    if data is not None:
-        st.sidebar.divider()
-        st.sidebar.subheader("Selection Tools")
-        selected_age = st.sidebar.slider(
+# Only display the file uploader if sample data is not selected
+toggle = st.sidebar.checkbox("Load sample data")
+if toggle:
+    url = "images/sample_data.csv"
+    data = loadcsv(url)
+
+
+else:
+    st.sidebar.subheader("Upload data")
+    uploaded_file = st.sidebar.file_uploader("Upload .csv file", type="csv")
+    if uploaded_file is not None:
+        stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
+        data = loadcsv(stringio)
+
+if 'data' in locals():
+    st.sidebar.divider()
+    st.sidebar.subheader("Selection Tools")
+    selected_age = st.sidebar.slider(
         label="Select an **Age Group**",
         min_value=0,
         max_value=95,
         value=0,  # Default value
         help="Select the age group to display"
-        )
+    )
 
-        if selected_age < 1:
-            st.image('images/8to16weeks.png')
-        elif selected_age == 1:
-            st.image('images/1yr.png')
-        elif selected_age == 3:
-            st.image('images/3yrs.png')
-        elif selected_age == 14:
-            st.image('images/14yrs.png')
-        elif selected_age == 65:
-            st.image('images/65.png')
-        elif selected_age >= 70 and selected_age <= 79:
-            st.image('images/70to79.png')
-        st.markdown(f"### :material/face: Seleceted Age {selected_age} yrs")
-        age_group_heatmap(data, age_in_years=selected_age)
+    if selected_age < 1:
+        st.image('images/8to16weeks.png')
+    elif selected_age == 1:
+        st.image('images/1yr.png')
+    elif selected_age == 3:
+        st.image('images/3yrs.png')
+    elif selected_age == 14:
+        st.image('images/14yrs.png')
+    elif selected_age == 65:
+        st.image('images/65.png')
+    elif selected_age >= 70 and selected_age <= 79:
+        st.image('images/70to79.png')
+    st.markdown(f"### :material/face: Selected Age {selected_age} yrs")
+    age_group_heatmap(data, age_in_years=selected_age)
 
-        toggle = st.sidebar.toggle("Show DataFrame", help="Show the corresponding DataFrame, allowing you to download a csv of the data.")
-        if toggle:
-            st.divider()
-            st.write("")
-            st.subheader(":material/table: DataFrame")
-            st.write(":material/download: Select export to csv to download this table. Top right of dataframe.")
-            st.dataframe(show_df(data, age_in_years=selected_age))
-
+    show_dataframe_toggle = st.sidebar.checkbox("Show DataFrame", help="Show the corresponding DataFrame, allowing you to download a csv of the data.")
+    if show_dataframe_toggle:
+        st.divider()
+        st.write("")
+        st.subheader(":material/table: DataFrame")
+        st.write(":material/download: Select export to csv to download this table. Top right of dataframe.")
+        st.dataframe(show_df(data, age_in_years=selected_age))
 else:
     st.image("images/big.png", caption="GitHub: janduplessis883")
     st.subheader("Quick Start Guide")
@@ -106,7 +111,7 @@ else:
 
     st.markdown(":material/play_circle: **Run** the Report.")
     st.markdown(":material/expand_circle_down: **Breakdown** the report selecting the following fields, remember to click **Refresh** once finished.")
-    if st.toggle("Video with breakdown instructions."):
+    if st.checkbox("Video with breakdown instructions."):
         st.video("images/video.mp4")
     col1, col2, col3 = st.columns(3)
     with col1:
