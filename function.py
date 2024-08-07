@@ -261,7 +261,6 @@ vaccines_to_drop = [
     "Repevax 2nd Scheduled Booster",
     "Repevax 3",
     "Repevax Booster",
-    "Rotavirus",
     "STAMARIL Aventis Pasteur MSD; 1",
     "Shingrix 1",
     "Td/IPV 1",
