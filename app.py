@@ -43,7 +43,8 @@ def loadcsv(stringio):
     return df
 
 
-st.sidebar.title("Configure")
+st.sidebar.title("Control Panel")
+st.sidebar.subheader("Upload data")
     # Only display the file uploader if sample data is not selected
 uploaded_file = st.sidebar.file_uploader("Upload .csv file", type="csv")
 
