@@ -53,6 +53,7 @@ if uploaded_file is not None:
 
     if data is not None:
         st.sidebar.divider()
+        st.sidebar.subheader("Selection Tools")
         selected_age = st.sidebar.slider(
         label="Select an **Age Group**",
         min_value=0,
