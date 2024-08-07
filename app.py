@@ -104,7 +104,7 @@ else:
 
     st.markdown(":material/play_circle: **Run** the Report.")
     st.markdown(":material/expand_circle_down: **Breakdown** the report selecting the following fields, remember to click **Refresh** once finished.")
-    if st.toggle("Video with breakdown instructioins.")
+    if st.toggle("Video with breakdown instructioins."):
         st.video("images/video.mp4")
     col1, col2, col3 = st.columns(3)
     with col1:
