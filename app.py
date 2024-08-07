@@ -45,8 +45,8 @@ st.sidebar.title("Control Panel")
 
 
 # Only display the file uploader if sample data is not selected
-toggle = st.sidebar.checkbox("Load sample data")
-if toggle:
+toggle2 = st.sidebar.checkbox("Load sample data")
+if toggle2:
     url = "images/sample_data2.csv"
     data = loadcsv(url)
 
@@ -84,7 +84,7 @@ if 'data' in locals():
     st.markdown(f"### :material/face: Selected Age {selected_age} yrs")
     age_group_heatmap(data, age_in_years=selected_age)
 
-    show_dataframe_toggle = st.sidebar.checkbox("Show DataFrame", help="Show the corresponding DataFrame, allowing you to download a csv of the data.")
+    show_dataframe_toggle = st.sidebar.toggle("Show DataFrame", help="Show the corresponding DataFrame, allowing you to download a csv of the data.")
     if show_dataframe_toggle:
         st.divider()
         st.write("")
@@ -111,7 +111,7 @@ else:
 
     st.markdown(":material/play_circle: **Run** the Report.")
     st.markdown(":material/expand_circle_down: **Breakdown** the report selecting the following fields, remember to click **Refresh** once finished.")
-    if st.checkbox("Video with breakdown instructions."):
+    if st.toggle("Video with breakdown instructions."):
         st.video("images/video.mp4")
     col1, col2, col3 = st.columns(3)
     with col1:
