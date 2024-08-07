@@ -45,13 +45,14 @@ def loadcsv(stringio):
 
 st.sidebar.title("Configure")
     # Only display the file uploader if sample data is not selected
-uploaded_file = st.sidebar.file_uploader("Choose a .csv file", type="csv")
+uploaded_file = st.sidebar.file_uploader("Upload .csv file", type="csv")
 
 if uploaded_file is not None:
     stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
     data = loadcsv(stringio)
-    st.sidebar.divider()
+
     if data is not None:
+        st.sidebar.divider()
         selected_age = st.sidebar.slider(
         label="Select an **Age Group**",
         min_value=0,
@@ -59,7 +60,6 @@ if uploaded_file is not None:
         value=0,  # Default value
         help="Select the age group to display"
         )
-
 
         if selected_age < 1:
             st.image('images/8to16weeks.png')
