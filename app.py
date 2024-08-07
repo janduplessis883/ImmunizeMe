@@ -83,3 +83,49 @@ if uploaded_file is not None:
             st.divider()
             st.write("")
             st.dataframe(show_df(data, age_in_years=selected_age))
+
+else:
+    st.image("images/big.png", caption="GitHub: janduplessis883")
+    st.subheader("Quick Start Guide")
+    st.markdown(""":material/download: Download the **ImmunizeMe Report** for SystmOne using the button below.
+                After download :material/rotate_right: **import** to Clinical Reporting in SystmOne, selecting the default import location.
+                You will find the report in :material/folder: **My Reports / Python Data**.""")
+
+    with open("images/ImmunizeMe.rpt", "rb") as file:
+        file_data = file.read()
+
+    # Create a download button
+    st.download_button(
+        label="Download ImmunizeMe.rpt",
+        data=file_data,
+        file_name="ImmunizeMe.rpt",
+        mime="application/octet-stream",
+    )
+
+    st.markdown(":material/play_circle: **Run** the Report.")
+    st.markdown(":material/expand_circle_down: **Breakdown** the report selecting the following fields, remember to click **Refresh** once finished.")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.code("""Demographics:
+        - Age in years
+        - Date of birth
+        - First name
+        - NHS Number
+        - Sex
+        - Surname
+
+    Event Details:
+        - Event date
+
+    Registration:
+        - Deduction date
+        - Registration date
+
+    Vaccinations:
+        - Vaccination type
+            """)
+
+    st.markdown(":material/csv: **Export** the report to CSV, saving it to a location of your choice.")
+    st.markdown(":material/upload: **Upload** your saved CSV in the control panel on the left of the app.")
+
+    st.markdown(":material/favorite: Enjoy!")
