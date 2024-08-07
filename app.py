@@ -75,13 +75,15 @@ if uploaded_file is not None:
             st.image('images/65.png')
         elif selected_age >= 70 and selected_age <= 79:
             st.image('images/70to79.png')
-        st.markdown(f"### Seleceted Age {selected_age} yrs")
+        st.markdown(f"### :material/face: Seleceted Age {selected_age} yrs")
         age_group_heatmap(data, age_in_years=selected_age)
 
         toggle = st.sidebar.toggle("Show DataFrame", help="Show the corresponding DataFrame, allowing you to download a csv of the data.")
         if toggle:
             st.divider()
             st.write("")
+            st.subheader(":material/table: DataFrame")
+            st.write(":material/download: Select export to csv to download this table. Top right of dataframe.")
             st.dataframe(show_df(data, age_in_years=selected_age))
 
 else:
@@ -104,7 +106,7 @@ else:
 
     st.markdown(":material/play_circle: **Run** the Report.")
     st.markdown(":material/expand_circle_down: **Breakdown** the report selecting the following fields, remember to click **Refresh** once finished.")
-    if st.toggle("Video with breakdown instructioins."):
+    if st.toggle("Video with breakdown instructions."):
         st.video("images/video.mp4")
     col1, col2, col3 = st.columns(3)
     with col1:
