@@ -116,23 +116,23 @@ else:
     col1, col2, col3 = st.columns(3)
     with col1:
         st.code("""Demographics:
-        - Age in years
-        - Date of birth
-        - First name
-        - NHS Number
-        - Sex
-        - Surname
+    - Age in years
+    - Date of birth
+    - First name
+    - NHS Number
+    - Sex
+    - Surname
 
-    Event Details:
-        - Event date
+Event Details:
+    - Event date
 
-    Registration:
-        - Deduction date
-        - Registration date
+Registration:
+    - Deduction date
+    - Registration date
 
-    Vaccinations:
-        - Vaccination type
-            """)
+Vaccinations:
+    - Vaccination type
+        """)
 
     st.markdown(":material/csv: **Export** the report to CSV, saving it to a location of your choice.")
     st.markdown(":material/upload: **Upload** your saved CSV in the control panel on the left of the app.")
