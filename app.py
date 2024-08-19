@@ -32,13 +32,14 @@ st.markdown(html, unsafe_allow_html=True)
 @st.cache_data(ttl=60 * 60)
 def loadcsv(stringio):
     df = pd.read_csv(stringio)
+    df.rename(columns={'ImmunizeMe - vaccines: Vaccination type': 'Vaccination type'}, inplace=True)
     df = map_vaccines(df)
     df = drop_vaccines(df)
 
     df['Date of birth'] = pd.to_datetime(df['Date of birth'], dayfirst=True)
     df['Deduction date'] = pd.to_datetime(df['Deduction date'], dayfirst=True)
     df['Registration date'] = pd.to_datetime(df['Registration date'], dayfirst=True)
-    df['Event date'] = pd.to_datetime(df['Event date'], dayfirst=True)
+
 
     df["age_years"] = df["Date of birth"].apply(
         lambda x: now.diff(pendulum.instance(x)).in_years()

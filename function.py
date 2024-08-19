@@ -201,6 +201,8 @@ reverse_name_mapping = {
         "Pneumovax 23 1",
         "Pneumovax 23 Booster",
     ],
+    "unknown": ["NO-VACCINE",
+    ],
 }
 
 vaccines_to_drop = [
@@ -342,6 +344,7 @@ def age_group_heatmap(df, age_in_years=0):
 
 
 def update_column_names(df):
+
     df.rename(columns=lambda x: x.lower().replace(' ', '_'), inplace=True)
     return df
 
