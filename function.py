@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 import streamlit as st
+import pendulum
+now = pendulum.now()
 
 reverse_name_mapping = {
     "DTaP/IPV/Hib/HepB": [
@@ -201,8 +203,6 @@ reverse_name_mapping = {
         "Pneumovax 23 1",
         "Pneumovax 23 Booster",
     ],
-    "unknown": ["NO-VACCINE",
-    ],
 }
 
 vaccines_to_drop = [
@@ -288,36 +288,39 @@ vaccines_to_drop = [
 
 def map_vaccines(df):
     for new_name, old_names in reverse_name_mapping.items():
-        df["Vaccination type"] = df["Vaccination type"].replace(old_names, new_name)
+        df["vaccination_type"] = df["vaccination_type"].replace(old_names, new_name)
 
     return df
 
 
 def drop_vaccines(df):
-    filtered_df = df[~df["Vaccination type"].isin(vaccines_to_drop)]
+    filtered_df = df[~df["vaccination_type"].isin(vaccines_to_drop)]
     return filtered_df
 
 def prep_df(df):
+    df = update_column_names(df)
+    df['vaccination_type'] = df['vaccination_type'].replace('unknown', '-NO-VACCINE')
     df = map_vaccines(df)
     df = drop_vaccines(df)
 
-    df['Date of birth'] = pd.to_datetime(df['Date of birth'], dayfirst=True)
-    df['Deduction date'] = pd.to_datetime(df['Deduction date'], dayfirst=True)
-    df['Registration date'] = pd.to_datetime(df['Registration date'], dayfirst=True)
-    df['Event date'] = pd.to_datetime(df['Event date'], dayfirst=True)
+    df['dob'] = pd.to_datetime(df['dob'], dayfirst=True)
+    df['deduction_date'] = pd.to_datetime(df['deduction_date'], dayfirst=True)
+    df['registration_date'] = pd.to_datetime(df['registration_date'], dayfirst=True)
+    df['event_date'] = pd.to_datetime(df['event_date'], dayfirst=True)
 
-    df["age_years"] = df["Date of birth"].apply(
+    df["age_years"] = df["dob"].apply(
         lambda x: now.diff(pendulum.instance(x)).in_years()
     )
-    df["age_months"] = df["Date of birth"].apply(
+    df["age_months"] = df["dob"].apply(
         lambda x: (now.diff(pendulum.instance(x)).in_months())
     )
-    df["age_weeks"] = df["Date of birth"].apply(
+    df["age_weeks"] = df["dob"].apply(
         lambda x: (now.diff(pendulum.instance(x)).in_weeks())
     )
 
     df.sort_values(by='age_weeks', inplace=True)
-    df = update_column_names(df)
+
+
     return df
 
 def drop_deducted(df, col_name):
@@ -325,7 +328,7 @@ def drop_deducted(df, col_name):
 
 def age_group_heatmap(df, age_in_years=0):
 
-    age_0 = df[df['age_in_years'] == age_in_years]
+    age_0 = df[df['age_years'] == age_in_years]
     result = age_0.groupby(['surname', 'age_weeks', 'vaccination_type']).size().unstack(fill_value=0)
     sorted_df = result.sort_values('age_weeks')
 
@@ -350,6 +353,6 @@ def update_column_names(df):
 
 def show_df(df, age_in_years=0):
     age_0 = df[df['age_in_years'] == age_in_years]
-    result = age_0.groupby(['nhs_number', 'first_name', 'surname', 'date_of_birth', 'age_years', 'age_weeks', 'vaccination_type']).size().unstack(fill_value=0)
+    result = age_0.groupby(['nhs_number', 'first_name', 'surname', 'date_of_birth', 'preferred_telephone_number', 'age_years', 'age_weeks', 'vaccination_type']).size().unstack(fill_value=0)
     sorted_df = result.sort_values('age_weeks')
     return sorted_df
