@@ -87,6 +87,7 @@ if pages == 'Childhood Imms':
 
             if show_dataframe_toggle:
                 st.divider()
+                st.markdown("**DataFrame of Selected age**. - use the download `.csv` button at the top right to export this list to SMS patients.")
                 st.dataframe(show_df(data, selected_age))
 
 
