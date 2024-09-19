@@ -352,7 +352,30 @@ def update_column_names(df):
     return df
 
 def show_df(df, age_in_years=0):
-    age_0 = df[df['age_in_years'] == age_in_years]
-    result = age_0.groupby(['nhs_number', 'first_name', 'surname', 'date_of_birth', 'preferred_telephone_number', 'age_years', 'age_weeks', 'vaccination_type']).size().unstack(fill_value=0)
+    age_0 = df[df['age'] == age_in_years]
+    result = age_0.groupby(['nhs', 'first_name', 'surname', 'dob', 'telephone', 'age_years', 'age_weeks', 'vaccination_type']).size().unstack(fill_value=0)
     sorted_df = result.sort_values('age_weeks')
     return sorted_df
+
+def calculate_age_at_vaccination(df, dob_col='dob', event_date_col='event_date'):
+    """
+    Calculate the age of a patient at the time of vaccination.
+
+    Parameters:
+    df (DataFrame): The DataFrame containing 'dob' and 'event_date'.
+    dob_col (str): Column name for date of birth.
+    event_date_col (str): Column name for the event date (vaccination date).
+
+    Returns:
+    DataFrame: A DataFrame with an additional column 'age_at_vaccination' containing the calculated ages.
+    """
+    # Ensure the dob and event_date columns are in datetime format
+    df[dob_col] = pd.to_datetime(df[dob_col], errors='coerce')
+    df[event_date_col] = pd.to_datetime(df[event_date_col], errors='coerce')
+
+    # Calculate age at the time of vaccination
+    df['age_at_vaccination'] = df.apply(lambda row: row[event_date_col].year - row[dob_col].year
+                                        - ((row[event_date_col].month, row[event_date_col].day) <
+                                           (row[dob_col].month, row[dob_col].day)), axis=1)
+
+    return df
