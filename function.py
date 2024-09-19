@@ -357,6 +357,12 @@ def show_df(df, age_in_years=0):
     sorted_df = result.sort_values('age_weeks')
     return sorted_df
 
+def base_df_function(df):
+    age_0 = df
+    result = age_0.groupby(['nhs', 'first_name', 'surname', 'dob', 'telephone', 'age_years', 'age_weeks', 'vaccination_type']).size().unstack(fill_value=0).reset_index()
+    sorted_df = result.sort_values('age_weeks')
+    return sorted_df
+
 def calculate_age_at_vaccination(df, dob_col='dob', event_date_col='event_date'):
     """
     Calculate the age of a patient at the time of vaccination.
