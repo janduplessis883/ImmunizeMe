@@ -28,10 +28,10 @@ def loadcsv(stringio):
     return df
 
 st.sidebar.markdown("# :material/vaccines: Control Panel")
-pages = st.sidebar.radio('Select a page', ['Childhood Imms', 'Influenza Stats', 'RSV Stats', 'Search Tool',])
+pages = st.sidebar.radio('Select a page', ['Childhood Imms - Heatmap', 'Childhood Imms - Searches', 'Influenza Stats', 'RSV Stats'])
 
 
-if pages == 'Childhood Imms':
+if pages == 'Childhood Imms - Heatmap':
     st.title("ImmunizeMe - Childhood Imms")
 
     toggle2 = st.sidebar.checkbox("Load sample data")
@@ -92,6 +92,9 @@ if pages == 'Childhood Imms':
 
 
 
+elif pages == 'Childhood Imms - Searches':
+    st.title("ImmunizeMe - Childhood Imms - Searches")
+
 
 elif pages == 'Influenza Stats':
     st.title("ImmunizeMe - Influensza Stats")
@@ -100,8 +103,3 @@ elif pages == 'Influenza Stats':
 
 elif pages == 'RSV Stats':
     st.title("ImmunizeMe - RSV Stats")
-
-
-
-elif pages == 'Search Tools':
-    st.title("ImmunizeMe - Search Tools")
