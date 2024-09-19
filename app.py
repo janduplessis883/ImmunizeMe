@@ -32,7 +32,7 @@ pages = st.sidebar.radio('Select a page', ['Childhood Imms - Heatmap', 'Childhoo
 
 
 if pages == 'Childhood Imms - Heatmap':
-    st.title("ImmunizeMe - Childhood Imms")
+    st.title("ImmunizeMe - Childhood Imms: Heatmap")
 
     toggle2 = st.sidebar.checkbox("Load sample data")
     if toggle2:
@@ -93,11 +93,11 @@ if pages == 'Childhood Imms - Heatmap':
 
 
 elif pages == 'Childhood Imms - Searches':
-    st.title("ImmunizeMe - Childhood Imms - Searches")
+    st.title("ImmunizeMe - Childhood Imms: Searches")
 
 
 elif pages == 'Influenza Stats':
-    st.title("ImmunizeMe - Influensza Stats")
+    st.title("ImmunizeMe - Influenza Stats")
 
 
 
