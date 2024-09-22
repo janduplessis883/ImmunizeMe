@@ -31,7 +31,13 @@ def load_sample_data():
 def handle_file_upload():
     uploaded_file = st.sidebar.file_uploader("Upload .csv file", type="csv")
     if uploaded_file is not None:
-        stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
+        try:
+            # Try reading the file using UTF-8 encoding
+            stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
+        except UnicodeDecodeError:
+            # If it fails, try reading with Latin-1 encoding
+            stringio = StringIO(uploaded_file.getvalue().decode("latin1"))
+
         return loadcsv(stringio)
     return None
 
@@ -103,56 +109,6 @@ if pages == 'Childhood Imms - Heatmap':
 
 elif pages == 'Childhood Imms - Searches':
     st.title("ImmunizeMe - Childhood Imms: Searches")
-    # Create a slider to select an age range between 0 and 95
-    st.sidebar.divider()
-    st.sidebar.header("Build Search")
-    age_range = st.sidebar.slider(
-        label="Select an **Age Range**",
-        min_value=0,
-        max_value=95,
-        value=(0, 15),  # Default range, you can change this if needed
-        help="Select the age range for your analysis"
-    )
-
-    # Display the selected range
-    st.sidebar.markdown(f"Selected age range: **{age_range[0]} - {age_range[1]} years**")
-    st.sidebar.divider()
-
-
-
-    # Vaccination options for the first multiselect
-    vaccination_groups = [
-        "-NO-VACCINE", "DTaP/IPV/Hib/HepB", "MMR", "MenB", "Rotavirus", "Pneumococcal", "Hib/MenC", "HPV", "Influenza", "Shingles", "Covid-19", "RSV", "MenACWY"
-    ]
-
-    # First multiselect for choosing vaccination groups
-    selected_vaccination_groups = st.sidebar.multiselect(
-        label="Select **Vaccination Groups**",
-        options=vaccination_groups,
-        help="Select the vaccination groups to track dose status"
-    )
-
-    # Dynamically generate number selectors for each selected vaccination group
-    dose_selection = {}
-    st.sidebar.divider()
-    if selected_vaccination_groups:
-        st.write("### Select Number of Doses for Each Vaccination Group")
-        for group in selected_vaccination_groups:
-            # For each selected vaccination group, create a number selector with options 0, 1, 2, or 3
-            doses = st.sidebar.selectbox(
-                label=f"Number of doses for **{group}**:",
-                options=[0, 1, 2, 3],
-                index=0,  # Default to 0 doses
-                key=group  # Unique key for each selectbox to avoid issues with Streamlit's state
-            )
-            # Store the selection in a dictionary
-            dose_selection[group] = doses
-    st.divider()
-    # Display the user's selections
-    if dose_selection:
-        st.sidebar.write(dose_selection)
-
-
 
 # Example base_df DataFrame (Assuming you have this in your code already)
 # It should contain an 'age_years' column and columns named after each vaccine group
@@ -160,27 +116,32 @@ elif pages == 'Childhood Imms - Searches':
 
 
     base_df = base_df_function(st.session_state.data)
-    st.code(base_df.columns)
+
+    if 'Normal Immunoglobulin 1' in base_df.columns:
+        base_df.drop(columns=['Normal Immunoglobulin 1'], inplace=True)
+    if 'Adacel vaccine suspension for injection 0.5ml pre-filled syringes 1' in base_df.columns:
+        base_df.drop(columns=['Adacel vaccine suspension for injection 0.5ml pre-filled syringes 1'], inplace=True)
+
 
     # Age range selection
     age_range = st.slider(
-        label="Select Age Range",
+        label="Select **Age Range**",
         min_value=0,
         max_value=95,
         value=(0, 95),  # Default range
         help="Select the age range to filter the patients"
     )
-
+    vacc_groups = list(base_df.columns)[7:]
+    vacc_groups_sorted = sorted(vacc_groups)
+    # st.code(vacc_groups_sorted)
     # Vaccination options for the first multiselect
-    vaccination_groups = [
-        "DTaP/IPV/Hib/HepB", "MMR", "MenB", "Rotavirus", "Pneumococcal", "Influenza", "Shingles", "Covid-19"
-    ]
+    vaccination_groups = vacc_groups_sorted
 
     # First multiselect for choosing vaccination groups
     selected_vaccination_groups = st.multiselect(
-        label="Select Vaccination Groups",
+        label="Select **Vaccination Groups**",
         options=vaccination_groups,
-        help="Select the vaccination groups to filter by dose status"
+        help="Select the vaccination groups to filter by dose status - Adding more than one group works as an AND statement."
     )
 
     # Initialize a dictionary to store the selected dose filters for each vaccine group
@@ -190,18 +151,39 @@ elif pages == 'Childhood Imms - Searches':
     if selected_vaccination_groups:
         st.write("### Select Number of Doses for Each Vaccination Group")
         for group in selected_vaccination_groups:
-            doses = st.selectbox(
-                label=f"Number of doses for {group}:",
-                options=[0, 1, 2, 3],
-                index=0,  # Default to 0 doses
-                key=group  # Unique key for each selectbox to avoid issues with Streamlit's state
-            )
+            if group == '-NO-VACCINE':
+                doses = st.selectbox(
+                    label=f"Number of doses for **{group}**:",
+                    options=[1,],
+                    index=0,  # Default to 0 doses
+                    key=group  # Unique key for each selectbox to avoid issues with Streamlit's state
+                )
+            else:
+                max_no = base_df[group].max()
+                doses = st.selectbox(
+                    label=f"Number of doses for **{group}**:",
+                    options=list(range(0, max_no+1)),  # Ensure options are correctly defined
+                    index=0,  # Default to 0 doses
+                    key=group  # Unique key for each selectbox to avoid issues with Streamlit's state
+                )
             dose_selection[group] = doses
 
     # Now apply the filters on base_df
 
     # 1. Filter based on age range
     filtered_df = base_df[(base_df['age_years'] >= age_range[0]) & (base_df['age_years'] <= age_range[1])]
+    st.divider()
+    st.write("### Filtered Data")
+    # Create the plot
+    fig, ax = plt.subplots(figsize=(20, 3))
+    sns.histplot(filtered_df['age_years'], color='#edc55c')
+    ax.yaxis.grid(True, linestyle="--", linewidth=0.5, color="#888888")
+    ax.xaxis.grid(False)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["left"].set_visible(False)
+    plt.tight_layout()
+    st.pyplot(fig)
 
     # 2. Filter based on vaccination group and doses
     for group, doses in dose_selection.items():
@@ -209,8 +191,9 @@ elif pages == 'Childhood Imms - Searches':
             filtered_df = filtered_df[filtered_df[group] == doses]
 
     # Display the filtered DataFrame
-    st.write("### Filtered Data")
+    st.markdown(f"### No of Rows: {filtered_df.shape[0]}")
     st.dataframe(filtered_df)
+
 
     # Filter by Vaccine Group
 

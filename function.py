@@ -59,7 +59,6 @@ reverse_name_mapping = {
         "Prevenar - 13 3",
         "Prevenar - 13 Booster",
     ],
-    "Revaxis": ["DTaP/IPV 1", "DTaP/IPV 2", "DTaP/IPV 3"],
     "MMR": [
         "Measles/Mumps/Rubella 1",
         "Measles/Mumps/Rubella Under 1 yr",
@@ -154,6 +153,10 @@ reverse_name_mapping = {
         "Revaxis 2nd Scheduled Booster",
         "Revaxis 3",
         "Revaxis Booster",
+        "Adacel vaccine suspension for injection 0.5ml pre-filled syringes 1",
+        "DTaP/IPV 1",
+        "DTaP/IPV 2",
+        "DTaP/IPV 3",
     ],
     "Hep A": [
         "Havrix Mono Junior Monodose Booster",
@@ -203,9 +206,13 @@ reverse_name_mapping = {
         "Pneumovax 23 1",
         "Pneumovax 23 Booster",
     ],
+    "RSV": [
+        "Abrysvo",
+    ],
 }
 
 vaccines_to_drop = [
+    "Adacel vaccine suspension for injection 0.5ml pre-filled syringes 1",
     "Ambirix 1",
     "Anti-D Immunoglobulin 1",
     "Avaxim 1",
@@ -333,8 +340,9 @@ def age_group_heatmap(df, age_in_years=0):
     sorted_df = result.sort_values('age_weeks')
 
     st.write(f"Patient Count: {sorted_df.shape[0]}")
+    df_length = round((sorted_df.shape[0] * 0.45), 0)
     # Create a heatmap
-    plt.figure(figsize=(18, 12))
+    plt.figure(figsize=(18, df_length))
     sns.heatmap(sorted_df, annot=True, fmt="d", cmap="Oranges", cbar=True)
 
     # Adding title and labels
@@ -361,7 +369,20 @@ def base_df_function(df):
     age_0 = df
     result = age_0.groupby(['nhs', 'first_name', 'surname', 'dob', 'telephone', 'age_years', 'age_weeks', 'vaccination_type']).size().unstack(fill_value=0).reset_index()
     sorted_df = result.sort_values('age_weeks')
-    return sorted_df
+    # Separate the first column and the rest of the columns
+    first_column = ['nhs', 'first_name', 'surname', 'dob', 'telephone', 'age_years', 'age_weeks']
+    other_columns = sorted_df.columns.difference(first_column)  # Get all columns except 'name'
+
+    # Sort the rest of the columns alphabetically
+    sorted_columns = sorted(other_columns)
+
+    # Combine the first column and the sorted columns
+    new_column_order = first_column + sorted_columns
+
+    # Reorder the DataFrame based on the new column order
+    new_df = sorted_df[new_column_order]
+
+    return new_df
 
 def calculate_age_at_vaccination(df, dob_col='dob', event_date_col='event_date'):
     """
