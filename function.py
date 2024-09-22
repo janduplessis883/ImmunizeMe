@@ -58,6 +58,7 @@ reverse_name_mapping = {
         "Prevenar - 13 2",
         "Prevenar - 13 3",
         "Prevenar - 13 Booster",
+        "Pneumococcal polysaccharide vaccine (PPV) Booster",
     ],
     "MMR": [
         "Measles/Mumps/Rubella 1",
@@ -116,6 +117,7 @@ reverse_name_mapping = {
         "Influenza Vaccine 1",
         "Cell-based quadrivalent Flu/Vac/SA inj 0.5ml pfs (Seqirus UK Ltd) 1",
         "Influvac sub-unit Tetra (Viatris formerly Mylan) 1",
+        "Influenza Tetra MYL vacc inj 0.5ml pre-filled syringes (Viatris UK Healthcare Ltd) 1",
     ],
     "HPV": [
         "Gardasil 1",
@@ -207,7 +209,7 @@ reverse_name_mapping = {
         "Pneumovax 23 Booster",
     ],
     "RSV": [
-        "Abrysvo",
+        "Abrysvo vaccine powder and solvent for solution for injection 0.5ml vials (Pfizer) Single",
     ],
 }
 
