@@ -24,7 +24,7 @@ def loadcsv(stringio):
 
 # Sample data loading function
 def load_sample_data():
-    url = "images/sample_data2.csv"
+    url = "images/sample_data3.csv"
     return loadcsv(url)
 
 # File uploader logic and session state handling
