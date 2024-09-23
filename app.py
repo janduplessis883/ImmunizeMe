@@ -8,9 +8,10 @@ from function import *  # Assuming functions like prep_df, calculate_age_at_vacc
 import streamlit_shadcn_ui as ui
 import pendulum
 now = pendulum.now()
+current_year = now.year
 
 st.set_page_config(page_title="ImmunizeMe", layout="wide")
-
+st.title("ImmunizeMe")
 pages = ui.tabs(
     options=[
         "Quick Start",
@@ -74,7 +75,7 @@ st.sidebar.divider()
 
 
 if pages == 'Childhood Imms - Heatmap':
-    st.title("ImmunizeMe - Childhood Imms: Heatmap")
+    st.header("Childhood Imms: Heatmap")
     if st.session_state.data is None:
         st.warning("No data loaded. Load Sample data or upload your own dataset.")
         st.stop()
@@ -112,7 +113,7 @@ if pages == 'Childhood Imms - Heatmap':
         age_group_heatmap(st.session_state.data, selected_age)
 
         # Toggle to show DataFrame
-        st.sidebar.divider()
+
         show_dataframe_toggle = st.sidebar.checkbox("Show DataFrame", help="Show the corresponding DataFrame, allowing you to download a csv of the data.")
 
         if show_dataframe_toggle:
@@ -139,7 +140,7 @@ elif pages == 'All Immunisations - Search':
         base_df.drop(columns=['Adacel vaccine suspension for injection 0.5ml pre-filled syringes 1'], inplace=True)
 
     # Age range selection
-    age_range = st.slider(
+    age_range = st.sidebar.slider(
         label="Select **Age Range**",
         min_value=0,
         max_value=95,
@@ -153,7 +154,7 @@ elif pages == 'All Immunisations - Search':
     vaccination_groups = vacc_groups_sorted
 
     # First multiselect for choosing vaccination groups
-    selected_vaccination_groups = st.multiselect(
+    selected_vaccination_groups = st.sidebar.multiselect(
         label="Select **Vaccination Groups**",
         options=vaccination_groups,
         help="Select the vaccination groups to filter by dose status - Adding more than one group works as an AND statement."
@@ -161,13 +162,17 @@ elif pages == 'All Immunisations - Search':
 
     # Initialize a dictionary to store the selected dose filters for each vaccine group
     dose_selection = {}
-
+    if not dose_selection:
+        pass
+    else:
+        st.sidebar.divider()
+        st.markdown("Select **Number of Doses** for Each Vaccination Group")
     # Dynamically generate number selectors for each selected vaccination group
     if selected_vaccination_groups:
         st.write("### Select Number of Doses for Each Vaccination Group")
         for group in selected_vaccination_groups:
             if group == '-NO-VACCINE':
-                doses = st.selectbox(
+                doses = st.sidebar.selectbox(
                     label=f"Number of doses for **{group}**:",
                     options=[1,],
                     index=0,  # Default to 0 doses
@@ -176,7 +181,7 @@ elif pages == 'All Immunisations - Search':
                 st.write("-NO-VACCINE = 1 (List all Patients who has no vaccination record.)")
             else:
                 max_no = base_df[group].max()
-                doses = st.selectbox(
+                doses = st.sidebar.selectbox(
                     label=f"Number of doses for **{group}**:",
                     options=list(range(0, max_no+1)),  # Ensure options are correctly defined
                     index=0,  # Default to 0 doses
@@ -237,12 +242,83 @@ elif pages == 'Influenza Stats':
         st.warning("No data loaded. Load Sample data or upload your own dataset.")
         st.stop()
 
+    influenza_df = influezenza_stats_df(st.session_state.data)
+
+    location = st.selectbox("Select **Vaccination Location**", options=make_dropdown_list(influenza_df), index=0)
+
+    influenza_df = influenza_df[influenza_df['event_done_at_id'] == location]
+
+    month_df = to_timeseries(influenza_df, 'event_date', time_period='M')
+
+    fig, ax = plt.subplots(figsize=(20, 6))
+
+    # Create the bar plot
+    sns.barplot(x='date', y='count', data=month_df, ax=ax)
+
+    # Customize grid and remove unnecessary spines
+    ax.yaxis.grid(True, linestyle="--", linewidth=0.5, color="#888888")
+    ax.xaxis.grid(False)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["left"].set_visible(False)
+
+    # Add data points above each bar
+    for p in ax.patches:
+        ax.text(
+            p.get_x() + p.get_width() / 2,  # X-position at the center of each bar
+            p.get_height(),  # Y-position just above the bar
+            f'{int(p.get_height())}',  # Text to display (rounded to integer)
+            ha='center',  # Horizontal alignment
+            va='bottom'  # Vertical alignment
+        )
+
+    # Set title
+    plt.title(f"Influenza vaccines administered - {location} (Children, Under & Over)")
+
+    # Rotate x-ticks for better visibility if needed
+    plt.xticks(rotation=90)
+
+    # Ensure layout looks nice
+    plt.tight_layout()
+
+    # Display the plot in Streamlit
+    st.pyplot(fig)
+
+
+
+    for i in range(0, 2):
+        years_back = i
+        child, under, over = count_year(influenza_df, years_back=years_back)
+
+        c1, c2, c3, c4 = st.columns(4, gap='medium')
+        with c1:
+            st.markdown(f"### {current_year-years_back-1}/{current_year-years_back}")
+        with c2:
+            st.metric("Children < 18", child)
+        with c3:
+            st.metric("18 - 64yrs", under)
+        with c4:
+            st.metric("65yrs and over", over)
+
+        st.divider()
+
+
+
+
+
+
+
+
+
+
+
 elif pages == 'RSV Stats':
     st.title("ImmunizeMe - RSV Stats")
     # Implement your logic here for RSV stats
     if st.session_state.data is None:
         st.warning("No data loaded. Load Sample data or upload your own dataset.")
         st.stop()
+
 
 
 elif pages == 'Quick Start':

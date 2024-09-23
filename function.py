@@ -4,6 +4,7 @@ import seaborn as sns
 import streamlit as st
 import pendulum
 now = pendulum.now()
+current_year = now.year
 
 reverse_name_mapping = {
     "DTaP/IPV/Hib/HepB": [
@@ -118,6 +119,7 @@ reverse_name_mapping = {
         "Cell-based quadrivalent Flu/Vac/SA inj 0.5ml pfs (Seqirus UK Ltd) 1",
         "Influvac sub-unit Tetra (Viatris formerly Mylan) 1",
         "Influenza Tetra MYL vacc inj 0.5ml pre-filled syringes (Viatris UK Healthcare Ltd) 1",
+        "Quadrivalent Flu/Vac/Split High-Dose inj 0.7ml pfs (Sanofi) Single",
     ],
     "HPV": [
         "Gardasil 1",
@@ -139,6 +141,8 @@ reverse_name_mapping = {
     "Fleunz Tetra": [
         "Fluenz Tetra (AstraZeneca UK Ltd) 1",
         "Fluenz Tetra (AstraZeneca UK Ltd) 2",
+        "Fluenz (trivalent) vaccine nasal suspension 0.2ml unit dose (AstraZeneca UK Ltd) 1",
+        "Fluenz (trivalent) vaccine nasal suspension 0.2ml unit dose (AstraZeneca UK Ltd) 2",
     ],
     "Covid-19": [
         "COVID-19 Vacc Spikevax Orig/Omicron BA.4/BA.5 inj md vials Booster",
@@ -146,6 +150,8 @@ reverse_name_mapping = {
         "COVID-19 mRNA Vaccine Comirnaty Children 5-11yrs 10mcg/0.2ml dose conc for disp for inj MDV (Pfizer) 1",
         "COVID-19 mRNA Vaccine Comirnaty Children 5-11yrs 10mcg/0.2ml dose conc for disp for inj MDV (Pfizer) 2",
         "COVID-19 Vacc Spikevax (XBB.1.5) 0.1mg/1ml inj md vials Booster",
+        "Comirnaty Omicron XBB.1.5 COVID-19 Vacc md vials Booster",
+        "Comirnaty Original/Omicron BA.4-5 COVID-19 Vacc md vials Booster",
     ],
     "BCG": ["BCG 1", "Infant BCG 1"],
     "DTP": [
@@ -202,7 +208,10 @@ reverse_name_mapping = {
         "Boostrix-IPV 2nd Scheduled Booster",
         "Boostrix-IPV Booster",
     ],
-    "Men ACWY": ["Meningococcal conjugate A,C, W135 + Y 1"],
+    "Men ACWY": [
+        "Meningococcal conjugate A,C, W135 + Y 1",
+        "MenQuadfi vaccine solution for injection 0.5ml vials (Sanofi) Single",
+                 ],
     "Pneumococcal 23": [
         "Pneumococcal Polysaccharide Vaccination (sanofi pasteur MSD Ltd) 1",
         "Pneumococcal Polysaccharide Vaccine (MSD) 1",
@@ -212,6 +221,7 @@ reverse_name_mapping = {
     ],
     "RSV": [
         "Abrysvo vaccine powder and solvent for solution for injection 0.5ml vials (Pfizer) Single",
+        "Respiratory Syncytial Virus (RSV) vaccine Single",
     ],
     "Men C": [
         "Meningitec 2nd Scheduled Booster",
@@ -221,6 +231,17 @@ reverse_name_mapping = {
         "NeisVac-C 1",
         "NeisVac-C Booster",
         "NeisVac-C Single",
+    ],
+    "dTaP/IPV": [
+        "dTaP/IPV 1",
+        "dTaP/IPV 1st Scheduled Booster",
+        "dTaP/IPV 2nd Scheduled Booster",
+        "DTaP/IPV 1st Scheduled Booster",
+        "DTaP/IPV 2nd Scheduled Booster",
+        "DTaP/IPV Booster",
+        "dTaP/IPV 2",
+        "dTaP/IPV 3",
+        "dTaP/IPV 4",
     ],
 }
 
@@ -240,11 +261,6 @@ vaccines_to_drop = [
     "Combined Hep A / Hep B 1",
     "Combined Hep A / Hep B 2",
     "Combined Hep A / Hep B 3",
-    "Comirnaty Omicron XBB.1.5 COVID-19 Vacc md vials Booster",
-    "Comirnaty Original/Omicron BA.4-5 COVID-19 Vacc md vials Booster",
-    "DTaP/IPV 1st Scheduled Booster",
-    "DTaP/IPV 2nd Scheduled Booster",
-    "DTaP/IPV Booster",
     "Fendrix 1",
     "HBVAXPRO 10 1",
     "HBVAXPRO 5 3",
@@ -290,10 +306,6 @@ vaccines_to_drop = [
     "Twinrix Paediatric 1",
     "Twinrix Paediatric 2",
     "Twinrix Paediatric 3",
-    "Vericella Zoster",
-    "dTaP/IPV 1",
-    "dTaP/IPV 1st Scheduled Booster",
-    "dTaP/IPV 2nd Scheduled Booster",
     "Supemtek Quadrivalent influenza  vaccine (recombinant) (Sanofi Pasteur) 1",
     "Smallpox 1",
 ]
@@ -372,7 +384,7 @@ def show_df(df, age_in_years=0):
     return sorted_df
 
 def base_df_function(df):
-    age_0 = df
+    age_0 = df.copy()
     result = age_0.groupby(['nhs', 'first_name', 'surname', 'dob', 'telephone', 'age_years', 'age_weeks', 'vaccination_type']).size().unstack(fill_value=0).reset_index()
     sorted_df = result.sort_values('age_weeks')
     # Separate the first column and the rest of the columns
@@ -412,3 +424,48 @@ def calculate_age_at_vaccination(df, dob_col='dob', event_date_col='event_date')
                                            (row[dob_col].month, row[dob_col].day)), axis=1)
 
     return df
+
+def update_location(df):
+    most_frequent_location = df["event_done_at_id"].mode()[0]
+
+    # Replace all other locations with 'Elsewhere'
+    df["event_done_at_id"] = df["event_done_at_id"].apply(
+        lambda x: x if x == most_frequent_location else "Elsewhere"
+    )
+    return df
+
+def influezenza_stats_df(df):
+    inf_df = df.copy()
+    influenza_df = inf_df[((inf_df['vaccination_type'] == 'Influenza') | (inf_df['vaccination_type'] == 'Fleunz Tetra'))]
+    influenza_df = update_location(influenza_df)
+    return influenza_df
+
+def to_timeseries(df, column, time_period="M"):
+    # Resample and count occurrences in each period
+    m_count = df.resample(time_period, on=column).size()
+
+    # Convert to DataFrame
+    m_count_df = m_count.reset_index()
+
+    # Rename columns
+    m_count_df.columns = ["date", "count"]
+    ts = m_count_df[m_count_df['date'] >= '2018-08-30']
+    return ts
+
+def make_dropdown_list(data):
+    return list(data["event_done_at_id"].unique())
+
+
+def count_year(df, years_back=0):
+    filtered_df = df[
+        (df["event_date"] > pd.Timestamp(f"{current_year-years_back-1}-09-01"))
+        & (df["event_date"] < pd.Timestamp(f"{current_year-years_back}-03-31"))
+    ]
+    # Count vaccines for each age group
+    children_count = filtered_df[filtered_df["age_at_vaccination"] <= 18]["patient_count"].sum()
+    adult_count = filtered_df[
+        (filtered_df["age_at_vaccination"] > 18) & (filtered_df["age_at_vaccination"] < 65)
+    ]["patient_count"].sum()
+    senior_count = filtered_df[filtered_df["age_at_vaccination"] >= 65]["patient_count"].sum()
+
+    return [children_count, adult_count, senior_count]
