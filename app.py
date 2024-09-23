@@ -249,3 +249,4 @@ elif pages == 'Quick Start':
     st.title("ImmunizeMe - Quick Start")
     # Implement your logic here for RSV stats
     st.header("SystmOne")
+    st.write("Instruction for conducting Searches to use with this app to follow soon.")
