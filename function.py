@@ -185,6 +185,8 @@ reverse_name_mapping = {
         "Yellow Fever Single",
         "Zostavax 1",
         "Herpes Zoster vaccination (generic) 1",
+        "Shingrix 2",
+        "Shingrix 1",
     ],
     "Typhoid": [
         "Typherix - Single Dose Single",
@@ -210,6 +212,15 @@ reverse_name_mapping = {
     ],
     "RSV": [
         "Abrysvo vaccine powder and solvent for solution for injection 0.5ml vials (Pfizer) Single",
+    ],
+    "Men C": [
+        "Meningitec 2nd Scheduled Booster",
+        "Meningitec Booster",
+        "Meningitis C Conjugate Vaccine (Unspecified) Single",
+        "Menitorix 1st Scheduled Booster",
+        "NeisVac-C 1",
+        "NeisVac-C Booster",
+        "NeisVac-C Single",
     ],
 }
 
@@ -246,14 +257,7 @@ vaccines_to_drop = [
     "Japanese Encephalitis 3",
     "MENVEO Vaccine 1",
     "Mantoux test 1",
-    "Meningitec 2nd Scheduled Booster",
-    "Meningitec Booster",
-    "Meningitis C Conjugate Vaccine (Unspecified) Single",
-    "Menitorix 1st Scheduled Booster",
-    "NeisVac-C 1",
-    "NeisVac-C Booster",
-    "NeisVac-C Single",
-    "Nimenrix 1",
+    "HNIG 1",
     "Pandemrix 1",
     "Pandemrix 2",
     "Pediacel 1",
@@ -273,7 +277,6 @@ vaccines_to_drop = [
     "Repevax 3",
     "Repevax Booster",
     "STAMARIL Aventis Pasteur MSD; 1",
-    "Shingrix 1",
     "Td/IPV 1",
     "Td/IPV 1st Scheduled Booster",
     "Td/IPV 2",
@@ -292,13 +295,13 @@ vaccines_to_drop = [
     "dTaP/IPV 1st Scheduled Booster",
     "dTaP/IPV 2nd Scheduled Booster",
     "Supemtek Quadrivalent influenza  vaccine (recombinant) (Sanofi Pasteur) 1",
+    "Smallpox 1",
 ]
 
 
 def map_vaccines(df):
     for new_name, old_names in reverse_name_mapping.items():
         df["vaccination_type"] = df["vaccination_type"].replace(old_names, new_name)
-
     return df
 
 
@@ -309,6 +312,7 @@ def drop_vaccines(df):
 def prep_df(df):
     df = update_column_names(df)
     df['vaccination_type'] = df['vaccination_type'].replace('unknown', '-NO-VACCINE')
+
     df = map_vaccines(df)
     df = drop_vaccines(df)
 

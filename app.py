@@ -31,6 +31,7 @@ def loadcsv(stringio):
                   'Surname', 'Deduction date', 'Registration date', 'Vaccination type', 'telephone',
                   'Event date', 'Event done at ID', 'Patient Count']
     df = prep_df(df)
+
     df = calculate_age_at_vaccination(df, 'dob', 'event_date')
     return df
 
@@ -172,6 +173,7 @@ elif pages == 'All Immunisations - Search':
                     index=0,  # Default to 0 doses
                     key=group  # Unique key for each selectbox to avoid issues with Streamlit's state
                 )
+                st.write("-NO-VACCINE = 1 (List all Patients who has no vaccination record.)")
             else:
                 max_no = base_df[group].max()
                 doses = st.selectbox(
@@ -187,8 +189,15 @@ elif pages == 'All Immunisations - Search':
     # 1. Filter based on age range
     filtered_df = base_df[(base_df['age_years'] >= age_range[0]) & (base_df['age_years'] <= age_range[1])]
     st.divider()
-    st.write("### Filtered Data")
+    st.write("## Filtered Data")
+    st.markdown(f"Searching Age Range **{age_range[0]} to {age_range[1]} yrs**")
     # Create the plot
+
+    # 2. Filter based on vaccination group and doses
+    for group, doses in dose_selection.items():
+        if group in filtered_df.columns:
+            filtered_df = filtered_df[filtered_df[group] == doses]
+
     fig, ax = plt.subplots(figsize=(20, 3))
     sns.histplot(filtered_df['age_years'], color='#edc55c')
     ax.yaxis.grid(True, linestyle="--", linewidth=0.5, color="#888888")
@@ -199,13 +208,8 @@ elif pages == 'All Immunisations - Search':
     plt.tight_layout()
     st.pyplot(fig)
 
-    # 2. Filter based on vaccination group and doses
-    for group, doses in dose_selection.items():
-        if group in filtered_df.columns:
-            filtered_df = filtered_df[filtered_df[group] == doses]
-
     # Display the filtered DataFrame
-    st.markdown(f"### No of Rows: {filtered_df.shape[0]}")
+    st.markdown(f"### Patient Count: {filtered_df.shape[0]}")
     st.dataframe(filtered_df)
 
 
