@@ -4,3 +4,4 @@ matplotlib
 seaborn
 pandas
 numpy
+streamlit-shadcn-ui

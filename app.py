@@ -5,11 +5,23 @@ import seaborn as sns
 from io import StringIO
 import os
 from function import *  # Assuming functions like prep_df, calculate_age_at_vaccination, etc. are defined here
-
+import streamlit_shadcn_ui as ui
 import pendulum
 now = pendulum.now()
 
 st.set_page_config(page_title="ImmunizeMe", layout="wide")
+
+pages = ui.tabs(
+    options=[
+        "Quick Start",
+        "Childhood Imms - Heatmap",
+        "All Immunisations - Search",
+        "Influenza Stats",
+        "RSV Stats",
+    ],
+    default_value="Quick Start",
+    key="mainnav",
+)
 st.sidebar.markdown("# :material/vaccines: Control Panel")
 
 @st.cache_data(ttl=60 * 60)
@@ -57,13 +69,14 @@ else:
 
 st.sidebar.divider()
 # Sidebar for navigation (this appears after file upload section)
-st.sidebar.subheader("Navigation")
-pages = st.sidebar.radio('Select a page', ['Childhood Imms - Heatmap', 'Childhood Imms - Searches', 'Influenza Stats', 'RSV Stats'])
+
 
 
 if pages == 'Childhood Imms - Heatmap':
     st.title("ImmunizeMe - Childhood Imms: Heatmap")
-
+    if st.session_state.data is None:
+        st.warning("No data loaded. Load Sample data or upload your own dataset.")
+        st.stop()
     # If data exists in session state, proceed to display
     if st.session_state.data is not None:
         selected_age = st.slider(
@@ -107,9 +120,11 @@ if pages == 'Childhood Imms - Heatmap':
             st.dataframe(show_df(st.session_state.data, selected_age))
 
 
-elif pages == 'Childhood Imms - Searches':
-    st.title("ImmunizeMe - Childhood Imms: Searches")
-
+elif pages == 'All Immunisations - Search':
+    st.title("ImmunizeMe - All Immunisations - Search")
+    if st.session_state.data is None:
+        st.warning("No data loaded. Load Sample data or upload your own dataset.")
+        st.stop()
 # Example base_df DataFrame (Assuming you have this in your code already)
 # It should contain an 'age_years' column and columns named after each vaccine group
 # with values indicating the number of doses a person has had.
@@ -121,7 +136,6 @@ elif pages == 'Childhood Imms - Searches':
         base_df.drop(columns=['Normal Immunoglobulin 1'], inplace=True)
     if 'Adacel vaccine suspension for injection 0.5ml pre-filled syringes 1' in base_df.columns:
         base_df.drop(columns=['Adacel vaccine suspension for injection 0.5ml pre-filled syringes 1'], inplace=True)
-
 
     # Age range selection
     age_range = st.slider(
@@ -215,7 +229,19 @@ elif pages == 'Childhood Imms - Searches':
 elif pages == 'Influenza Stats':
     st.title("ImmunizeMe - Influenza Stats")
     # Implement your logic here for Influenza stats
+    if st.session_state.data is None:
+        st.warning("No data loaded. Load Sample data or upload your own dataset.")
+        st.stop()
 
 elif pages == 'RSV Stats':
     st.title("ImmunizeMe - RSV Stats")
     # Implement your logic here for RSV stats
+    if st.session_state.data is None:
+        st.warning("No data loaded. Load Sample data or upload your own dataset.")
+        st.stop()
+
+
+elif pages == 'Quick Start':
+    st.title("ImmunizeMe - Quick Start")
+    # Implement your logic here for RSV stats
+    st.header("SystmOne")
