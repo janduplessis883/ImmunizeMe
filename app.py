@@ -75,7 +75,7 @@ st.sidebar.divider()
 
 
 if pages == 'Childhood Imms - Heatmap':
-    st.header("Childhood Imms: Heatmap")
+    st.header("Childhood Imms - Heatmap")
     if st.session_state.data is None:
         st.warning("No data loaded. Load Sample data or upload your own dataset.")
         st.stop()
@@ -123,7 +123,7 @@ if pages == 'Childhood Imms - Heatmap':
 
 
 elif pages == 'All Immunisations - Search':
-    st.title("ImmunizeMe - All Immunisations - Search")
+    st.header("All Immunisations - Search")
     if st.session_state.data is None:
         st.warning("No data loaded. Load Sample data or upload your own dataset.")
         st.stop()
@@ -166,10 +166,9 @@ elif pages == 'All Immunisations - Search':
         pass
     else:
         st.sidebar.divider()
-        st.markdown("Select **Number of Doses** for Each Vaccination Group")
     # Dynamically generate number selectors for each selected vaccination group
     if selected_vaccination_groups:
-        st.write("### Select Number of Doses for Each Vaccination Group")
+        st.sidebar.write("Select **Number of Doses** for Each Vaccination Group")
         for group in selected_vaccination_groups:
             if group == '-NO-VACCINE':
                 doses = st.sidebar.selectbox(
@@ -193,9 +192,8 @@ elif pages == 'All Immunisations - Search':
 
     # 1. Filter based on age range
     filtered_df = base_df[(base_df['age_years'] >= age_range[0]) & (base_df['age_years'] <= age_range[1])]
-    st.divider()
-    st.write("## Filtered Data")
-    st.markdown(f"Searching Age Range **{age_range[0]} to {age_range[1]} yrs**")
+    st.write("### Filtered Data")
+    st.markdown(f"Searching Age Range **{age_range[0]} - {age_range[1]} yrs**")
     # Create the plot
 
     # 2. Filter based on vaccination group and doses
@@ -236,7 +234,7 @@ elif pages == 'All Immunisations - Search':
 
 
 elif pages == 'Influenza Stats':
-    st.title("ImmunizeMe - Influenza Stats")
+    st.header("Influenza Stats")
     # Implement your logic here for Influenza stats
     if st.session_state.data is None:
         st.warning("No data loaded. Load Sample data or upload your own dataset.")
@@ -244,7 +242,7 @@ elif pages == 'Influenza Stats':
 
     influenza_df = influezenza_stats_df(st.session_state.data)
 
-    location = st.selectbox("Select **Vaccination Location**", options=make_dropdown_list(influenza_df), index=0)
+    location = st.sidebar.selectbox("Select **Vaccination Location**", options=make_dropdown_list(influenza_df), index=0)
 
     influenza_df = influenza_df[influenza_df['event_done_at_id'] == location]
 
@@ -313,7 +311,7 @@ elif pages == 'Influenza Stats':
 
 
 elif pages == 'RSV Stats':
-    st.title("ImmunizeMe - RSV Stats")
+    st.header("RSV Stats")
     # Implement your logic here for RSV stats
     if st.session_state.data is None:
         st.warning("No data loaded. Load Sample data or upload your own dataset.")
@@ -322,7 +320,7 @@ elif pages == 'RSV Stats':
 
 
 elif pages == 'Quick Start':
-    st.title("ImmunizeMe - Quick Start")
+    st.header("Quick Start")
     # Implement your logic here for RSV stats
-    st.header("SystmOne")
+    st.subheader("SystmOne")
     st.write("Instruction for conducting Searches to use with this app to follow soon.")
