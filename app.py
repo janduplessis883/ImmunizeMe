@@ -9,6 +9,8 @@ import streamlit_shadcn_ui as ui
 import pendulum
 now = pendulum.now()
 current_year = now.year
+from time import sleep
+from stqdm import stqdm
 
 st.set_page_config(page_title="ImmunizeMe", layout="wide")
 st.title("ImmunizeMe")
@@ -323,4 +325,12 @@ elif pages == 'Quick Start':
     st.header("Quick Start")
     # Implement your logic here for RSV stats
     st.subheader("SystmOne")
-    st.write("Instruction for conducting Searches to use with this app to follow soon.")
+    st.markdown("Download the ImmunizeMe SystmOne Search, and import with default settings to SystmOne.")
+    st.markdown("Within **Clinical Reporting** navigate to where the search is located: `My Reports/Python-data/ImmunizeMe - RUN ME`")
+    st.markdown("Right Click ImmunizeMe - RUN ME and **breakdown** results.")
+    c1, c2 = st.columns(2)
+    with c1:
+        with st.container(height=400, border=True):
+            st.image('images/systmone.png')
+    with c2:
+        st.write()
