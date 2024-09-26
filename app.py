@@ -334,3 +334,11 @@ elif pages == 'Quick Start':
             st.image('images/systmone.png')
     with c2:
         st.write()
+
+    c3, c4 = st.columns([8,1])
+    with c3:
+        st.markdown("Update the **date format** of your `.csv` ")
+        with st.container(height=400, border=True):
+            st.image('images/excels.png')
+    with c4:
+        st.write()
