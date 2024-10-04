@@ -326,8 +326,24 @@ elif pages == 'Quick Start':
     # Implement your logic here for RSV stats
     st.subheader("SystmOne")
     st.markdown("Download the ImmunizeMe SystmOne Search, and import with default settings to SystmOne.")
-    st.markdown("Within **Clinical Reporting** navigate to where the search is located: `My Reports/Python-data/ImmunizeMe - RUN ME`")
-    st.markdown("Right Click ImmunizeMe - RUN ME and **breakdown** results.")
+
+    # File path
+    file_path = 'images/ImmunizeMe.rpt'
+
+    # Open the file in binary mode
+    with open(file_path, 'rb') as file:
+        file_data = file.read()
+
+    # Create a download button
+    st.download_button(
+        label="Download ImmunizeMe Report",
+        data=file_data,
+        file_name="ImmunizeMe.rpt",
+        mime='application/octet-stream'
+    )
+
+    st.markdown("Within **Clinical Reporting** navigate to where the search is located: **My Reports/Python-data/ImmunizeMe - RUN ME**")
+    st.markdown("Right Click ImmunizeMe - RUN ME and **breakdown** results. Export the result to `.csv`")
     c1, c2 = st.columns(2)
     with c1:
         with st.container(height=400, border=True):
@@ -337,7 +353,7 @@ elif pages == 'Quick Start':
 
     c3, c4 = st.columns([8,1])
     with c3:
-        st.markdown("Update the **date format** of your `.csv` ")
+        st.markdown("### Update the **date format** of your `.csv` ")
         with st.container(height=400, border=True):
             st.image('images/excels.png')
     with c4:
