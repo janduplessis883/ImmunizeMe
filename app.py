@@ -344,7 +344,7 @@ elif pages == 'Quick Start':
     st.markdown("Right Click ImmunizeMe - RUN ME and **breakdown** results. Export the result to `.csv`")
     c1, c2 = st.columns(2)
     with c1:
-        with st.container(height=400, border=True):
+        with st.container(height=450, border=True):
             st.image('images/systmone.png')
     with c2:
         st.write()
@@ -352,7 +352,7 @@ elif pages == 'Quick Start':
     c3, c4 = st.columns([8,1])
     with c3:
         st.markdown("### Update the **date format** of your `.csv` ")
-        with st.container(height=400, border=True):
+        with st.container(height=450, border=True):
             st.image('images/excels.png')
     with c4:
         st.write()
