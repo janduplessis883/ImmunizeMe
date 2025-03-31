@@ -3,6 +3,7 @@ import pandas as pd
 import seaborn as sns
 import streamlit as st
 import pendulum
+
 now = pendulum.now()
 current_year = now.year
 
@@ -211,7 +212,7 @@ reverse_name_mapping = {
     "Men ACWY": [
         "Meningococcal conjugate A,C, W135 + Y 1",
         "MenQuadfi vaccine solution for injection 0.5ml vials (Sanofi) Single",
-                 ],
+    ],
     "Pneumococcal 23": [
         "Pneumococcal Polysaccharide Vaccination (sanofi pasteur MSD Ltd) 1",
         "Pneumococcal Polysaccharide Vaccine (MSD) 1",
@@ -321,17 +322,18 @@ def drop_vaccines(df):
     filtered_df = df[~df["vaccination_type"].isin(vaccines_to_drop)]
     return filtered_df
 
+
 def prep_df(df):
     df = update_column_names(df)
-    df['vaccination_type'] = df['vaccination_type'].replace('unknown', '-NO-VACCINE')
+    df["vaccination_type"] = df["vaccination_type"].replace("unknown", "-NO-VACCINE")
 
     df = map_vaccines(df)
     df = drop_vaccines(df)
 
-    df['dob'] = pd.to_datetime(df['dob'], dayfirst=True)
-    df['deduction_date'] = pd.to_datetime(df['deduction_date'], dayfirst=True)
-    df['registration_date'] = pd.to_datetime(df['registration_date'], dayfirst=True)
-    df['event_date'] = pd.to_datetime(df['event_date'], dayfirst=True)
+    df["dob"] = pd.to_datetime(df["dob"], dayfirst=True)
+    df["deduction_date"] = pd.to_datetime(df["deduction_date"], dayfirst=True)
+    df["registration_date"] = pd.to_datetime(df["registration_date"], dayfirst=True)
+    df["event_date"] = pd.to_datetime(df["event_date"], dayfirst=True)
 
     df["age_years"] = df["dob"].apply(
         lambda x: now.diff(pendulum.instance(x)).in_years()
@@ -343,19 +345,24 @@ def prep_df(df):
         lambda x: (now.diff(pendulum.instance(x)).in_weeks())
     )
 
-    df.sort_values(by='age_weeks', inplace=True)
-
+    df.sort_values(by="age_weeks", inplace=True)
 
     return df
+
 
 def drop_deducted(df, col_name):
     return df[df[col_name].isnull()]
 
+
 def age_group_heatmap(df, age_in_years=0):
 
-    age_0 = df[df['age_years'] == age_in_years]
-    result = age_0.groupby(['surname', 'age_weeks', 'vaccination_type']).size().unstack(fill_value=0)
-    sorted_df = result.sort_values('age_weeks')
+    age_0 = df[df["age_years"] == age_in_years]
+    result = (
+        age_0.groupby(["surname", "age_weeks", "vaccination_type"])
+        .size()
+        .unstack(fill_value=0)
+    )
+    sorted_df = result.sort_values("age_weeks")
 
     st.write(f"Patient Count: {sorted_df.shape[0]}")
     df_length = round((sorted_df.shape[0] * 0.45), 0)
@@ -364,9 +371,11 @@ def age_group_heatmap(df, age_in_years=0):
     sns.heatmap(sorted_df, annot=True, fmt="d", cmap="Oranges", cbar=True)
 
     # Adding title and labels
-    plt.title('Heatmap of Number of Vaccinations by Surname and Vaccination Type, Sorted by Age Weeks')
-    plt.xlabel('vaccination_type')
-    plt.ylabel('surname')
+    plt.title(
+        "Heatmap of Number of Vaccinations by Surname and Vaccination Type, Sorted by Age Weeks"
+    )
+    plt.xlabel("vaccination_type")
+    plt.ylabel("surname")
 
     # Show the plot
     st.pyplot(plt)
@@ -374,22 +383,65 @@ def age_group_heatmap(df, age_in_years=0):
 
 def update_column_names(df):
 
-    df.rename(columns=lambda x: x.lower().replace(' ', '_'), inplace=True)
+    df.rename(columns=lambda x: x.lower().replace(" ", "_"), inplace=True)
     return df
 
+
 def show_df(df, age_in_years=0):
-    age_0 = df[df['age'] == age_in_years]
-    result = age_0.groupby(['nhs', 'first_name', 'surname', 'dob', 'telephone', 'age_years', 'age_weeks', 'vaccination_type']).size().unstack(fill_value=0)
-    sorted_df = result.sort_values('age_weeks')
+    age_0 = df[df["age"] == age_in_years]
+    result = (
+        age_0.groupby(
+            [
+                "nhs",
+                "first_name",
+                "surname",
+                "dob",
+                "telephone",
+                "age_years",
+                "age_weeks",
+                "vaccination_type",
+            ]
+        )
+        .size()
+        .unstack(fill_value=0)
+    )
+    sorted_df = result.sort_values("age_weeks")
     return sorted_df
+
 
 def base_df_function(df):
     age_0 = df.copy()
-    result = age_0.groupby(['nhs', 'first_name', 'surname', 'dob', 'telephone', 'age_years', 'age_weeks', 'vaccination_type']).size().unstack(fill_value=0).reset_index()
-    sorted_df = result.sort_values('age_weeks')
+    result = (
+        age_0.groupby(
+            [
+                "nhs",
+                "first_name",
+                "surname",
+                "dob",
+                "telephone",
+                "age_years",
+                "age_weeks",
+                "vaccination_type",
+            ]
+        )
+        .size()
+        .unstack(fill_value=0)
+        .reset_index()
+    )
+    sorted_df = result.sort_values("age_weeks")
     # Separate the first column and the rest of the columns
-    first_column = ['nhs', 'first_name', 'surname', 'dob', 'telephone', 'age_years', 'age_weeks']
-    other_columns = sorted_df.columns.difference(first_column)  # Get all columns except 'name'
+    first_column = [
+        "nhs",
+        "first_name",
+        "surname",
+        "dob",
+        "telephone",
+        "age_years",
+        "age_weeks",
+    ]
+    other_columns = sorted_df.columns.difference(
+        first_column
+    )  # Get all columns except 'name'
 
     # Sort the rest of the columns alphabetically
     sorted_columns = sorted(other_columns)
@@ -402,7 +454,8 @@ def base_df_function(df):
 
     return new_df
 
-def calculate_age_at_vaccination(df, dob_col='dob', event_date_col='event_date'):
+
+def calculate_age_at_vaccination(df, dob_col="dob", event_date_col="event_date"):
     """
     Calculate the age of a patient at the time of vaccination.
 
@@ -415,15 +468,22 @@ def calculate_age_at_vaccination(df, dob_col='dob', event_date_col='event_date')
     DataFrame: A DataFrame with an additional column 'age_at_vaccination' containing the calculated ages.
     """
     # Ensure the dob and event_date columns are in datetime format
-    df[dob_col] = pd.to_datetime(df[dob_col], errors='coerce')
-    df[event_date_col] = pd.to_datetime(df[event_date_col], errors='coerce')
+    df[dob_col] = pd.to_datetime(df[dob_col], errors="coerce")
+    df[event_date_col] = pd.to_datetime(df[event_date_col], errors="coerce")
 
     # Calculate age at the time of vaccination
-    df['age_at_vaccination'] = df.apply(lambda row: row[event_date_col].year - row[dob_col].year
-                                        - ((row[event_date_col].month, row[event_date_col].day) <
-                                           (row[dob_col].month, row[dob_col].day)), axis=1)
+    df["age_at_vaccination"] = df.apply(
+        lambda row: row[event_date_col].year
+        - row[dob_col].year
+        - (
+            (row[event_date_col].month, row[event_date_col].day)
+            < (row[dob_col].month, row[dob_col].day)
+        ),
+        axis=1,
+    )
 
     return df
+
 
 def update_location(df):
     most_frequent_location = df["event_done_at_id"].mode()[0]
@@ -434,11 +494,18 @@ def update_location(df):
     )
     return df
 
+
 def influezenza_stats_df(df):
     inf_df = df.copy()
-    influenza_df = inf_df[((inf_df['vaccination_type'] == 'Influenza') | (inf_df['vaccination_type'] == 'Fleunz Tetra'))]
+    influenza_df = inf_df[
+        (
+            (inf_df["vaccination_type"] == "Influenza")
+            | (inf_df["vaccination_type"] == "Fleunz Tetra")
+        )
+    ]
     influenza_df = update_location(influenza_df)
     return influenza_df
+
 
 def to_timeseries(df, column, time_period="M"):
     # Resample and count occurrences in each period
@@ -449,8 +516,9 @@ def to_timeseries(df, column, time_period="M"):
 
     # Rename columns
     m_count_df.columns = ["date", "count"]
-    ts = m_count_df[m_count_df['date'] >= '2018-08-30']
+    ts = m_count_df[m_count_df["date"] >= "2018-08-30"]
     return ts
+
 
 def make_dropdown_list(data):
     return list(data["event_done_at_id"].unique())
@@ -462,10 +530,15 @@ def count_year(df, years_back=0):
         & (df["event_date"] < pd.Timestamp(f"{current_year-years_back}-03-31"))
     ]
     # Count vaccines for each age group
-    children_count = filtered_df[filtered_df["age_at_vaccination"] <= 18]["patient_count"].sum()
+    children_count = filtered_df[filtered_df["age_at_vaccination"] <= 18][
+        "patient_count"
+    ].sum()
     adult_count = filtered_df[
-        (filtered_df["age_at_vaccination"] > 18) & (filtered_df["age_at_vaccination"] < 65)
+        (filtered_df["age_at_vaccination"] > 18)
+        & (filtered_df["age_at_vaccination"] < 65)
     ]["patient_count"].sum()
-    senior_count = filtered_df[filtered_df["age_at_vaccination"] >= 65]["patient_count"].sum()
+    senior_count = filtered_df[filtered_df["age_at_vaccination"] >= 65][
+        "patient_count"
+    ].sum()
 
     return [children_count, adult_count, senior_count]
