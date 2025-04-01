@@ -246,9 +246,11 @@ elif pages == "All Immunisations - Search":
             filtered_df = filtered_df[filtered_df[group] == doses]
 
     fig, ax = plt.subplots(figsize=(20, 3))
-    sns.histplot(filtered_df["age_years"], color="#edc55c")
+    sns.histplot(filtered_df["age_years"], color="#4e7b91")
     ax.yaxis.grid(True, linestyle="--", linewidth=0.5, color="#888888")
     ax.xaxis.grid(False)
+    ax.set_facecolor((1, 1, 1, 0))  # Fully transparent
+    fig.patch.set_alpha(0)  # Ensure figure is also transparent
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.spines["left"].set_visible(False)
@@ -284,11 +286,13 @@ elif pages == "Influenza Stats":
     fig, ax = plt.subplots(figsize=(20, 6))
 
     # Create the bar plot
-    sns.barplot(x="date", y="count", data=month_df, ax=ax)
+    sns.barplot(x="date", y="count", data=month_df, ax=ax, color="#4e7b91")
 
     # Customize grid and remove unnecessary spines
     ax.yaxis.grid(True, linestyle="--", linewidth=0.5, color="#888888")
     ax.xaxis.grid(False)
+    ax.set_facecolor((1, 1, 1, 0))  # Fully transparent
+    fig.patch.set_alpha(0)  # Ensure figure is also transparent
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.spines["left"].set_visible(False)

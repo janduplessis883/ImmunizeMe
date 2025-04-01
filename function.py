@@ -367,8 +367,16 @@ def age_group_heatmap(df, age_in_years=0):
     st.write(f"Patient Count: {sorted_df.shape[0]}")
     df_length = round((sorted_df.shape[0] * 0.45), 0)
     # Create a heatmap
+    # Assuming `sorted_df` is your dataset and `df_length` is its length
     plt.figure(figsize=(18, df_length))
-    sns.heatmap(sorted_df, annot=True, fmt="d", cmap="Oranges", cbar=True)
+
+    # Create the heatmap
+    ax = sns.heatmap(sorted_df, annot=True, fmt="d", cmap="Blues", cbar=True)
+
+    # Set transparent background
+    ax.set_facecolor((0, 0, 0, 0))  # Transparent axis background
+    plt.gcf().patch.set_alpha(0)  # Transparent figure background
+    plt.gca().patch.set_alpha(0)  # Transparent axis background
 
     # Adding title and labels
     plt.title(
@@ -377,7 +385,7 @@ def age_group_heatmap(df, age_in_years=0):
     plt.xlabel("vaccination_type")
     plt.ylabel("surname")
 
-    # Show the plot
+    # Show the plot in Streamlit
     st.pyplot(plt)
 
 

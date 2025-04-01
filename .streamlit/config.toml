@@ -4,19 +4,21 @@
 base = "light"
 
 # Primary color for your app, specified as a hex or named CSS color
-primaryColor = "#43718b"
+primaryColor = "#3e7c94"
 
 # Background color for your app
-backgroundColor = "#dac6d7"
+backgroundColor = "#fafafa"
 
 # Secondary background color for your app
-secondaryBackgroundColor = "#e8dae6"
+secondaryBackgroundColor = "#eaeae6"
 
 # Text color for your app
-textColor = "#3c455c"
+textColor = "#152944"
 
 # Font for your app, choose between "sans serif", "serif", and "monospace"
 font = "sans serif"
+
+baseRadius = "medium"
 
 [deprecation]
 showPyplotGlobalUse = false
