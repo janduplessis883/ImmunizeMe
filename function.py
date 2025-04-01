@@ -371,7 +371,7 @@ def age_group_heatmap(df, age_in_years=0):
     plt.figure(figsize=(18, df_length))
 
     # Create the heatmap
-    ax = sns.heatmap(sorted_df, annot=True, fmt="d", cmap="Blues", cbar=True)
+    ax = sns.heatmap(sorted_df, annot=True, fmt="d", cmap="BuPu", cbar=True)
 
     # Set transparent background
     ax.set_facecolor((0, 0, 0, 0))  # Transparent axis background
